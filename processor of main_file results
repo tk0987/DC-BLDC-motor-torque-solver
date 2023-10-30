@@ -1,0 +1,52 @@
+#force_checker
+
+"""
+this translates d(torque) into torque from each coil
+
+"""
+import numpy as np
+f=open("rotor_negative_current.txt","r",encoding='utf-8') # this file you saved. not provided in github - my network sucks!
+# vars:
+spatial=force=coil=deg=0.0
+# coils by no.:
+firstq=[]
+secq=[]
+thirdq=[]
+fourthq=[]
+
+for line in f:
+# split the line
+    parts=line.split("\t")
+# make some magic with that line: f'[a,b,c]\t[d,e,f]\tg\ti\n'. i don't care.
+    spatial=parts[0].translate(str.maketrans({"[":"","]":""})).split()
+    force=parts[1].translate(str.maketrans({"[":"","]":""})).split()
+    coil=parts[2].strip()
+    deg= parts[3].strip()
+# magic done barely
+    spatial=[float(spatial[0]),float(spatial[1]),float(spatial[2])]
+
+    force=[float(force[0]),float(force[1]),float(force[2])]
+# magic done: here we go
+    if float(coil)==1.0 :
+        
+        firstq.append([float(spatial[0]),float(spatial[1]),float(spatial[2]),float(force[0]),float(force[1]),float(force[2])])
+    if float(coil)==2 :
+        secq.append([float(spatial[0]),float(spatial[1]),float(spatial[2]),float(force[0]),float(force[1]),float(force[2])])
+    if float(coil)==3 :
+        thirdq.append([float(spatial[0]),float(spatial[1]),float(spatial[2]),float(force[0]),float(force[1]),float(force[2])])
+    if float(coil)==4 :
+       fourthq.append([float(spatial[0]),float(spatial[1]),float(spatial[2]),float(force[0]),float(force[1]),float(force[2])])
+# again: numpy rulez
+firstq=np.asanyarray(firstq)
+secq=np.asanyarray(secq)
+thirdq=np.asanyarray(thirdq)
+fourthq=np.asanyarray(fourthq)
+# print shapes - consciousness is life
+print(np.shape(firstq),np.shape(secq),np.shape(thirdq),np.shape(fourthq))
+# print torques
+print(4*np.sum(firstq[:,3]),4*np.sum(firstq[:,4]),4*np.sum(firstq[:,5])) # torques: x, y, z 1st coil - note - full rotation, there was 'integration' from 0 to np.pi/2... 
+print(4*np.sum(secq[:,3]),4*np.sum(secq[:,4]),4*np.sum(secq[:,5])) # torques: x, y, z 2nd coil - note - full rotation, there was 'integration' from 0 to np.pi/2... 
+print(4*np.sum(thirdq[:,3]),4*np.sum(thirdq[:,4]),4*np.sum(thirdq[:,5])) # torques: x, y, z 3rd coil - note - full rotation, there was 'integration' from 0 to np.pi/2... 
+print(4*np.sum(fourthq[:,3]),4*np.sum(fourthq[:,4]),4*np.sum(fourthq[:,5])) # torques: x, y, z 4th coil - note - full rotation, there was 'integration' from 0 to np.pi/2... 
+#torques summed up... 
+print(np.linalg.norm([4*np.sum(firstq[:,3])+4*np.sum(secq[:,3])+4*np.sum(thirdq[:,3])+4*np.sum(fourthq[:,3]),4*np.sum(firstq[:,4])+4*np.sum(secq[:,4])+4*np.sum(thirdq[:,4])+4*np.sum(fourthq[:,4])]))
