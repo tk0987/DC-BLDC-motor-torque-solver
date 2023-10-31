@@ -12,7 +12,7 @@ Example for the IDEA making real is provided, hence...
 there is not python/any_language module/library dedicated for such problems. so... just look inside, maybe you will find s'th usefull for you.
 
 SIMULATION GEOMETRY: quadrupole rotor with (s*cking simple) 4 rectangle coils, creating also 4-pole magnetic field. 
-There is no core inside the coils (it is far beyond my knowledge). The current is 1 [A], and the magnetisation of neodymium magnets is 1 [T] - in uT.
+There is no core inside the coils (it is far beyond my knowledge). The current is 1 [A], and the magnetisation of neodymium magnets is 1 [T] - in mT.
 
 if the logic is correct, this code is easily scallable: multiply the results by (your_current)/1[A]. For the differences in rotor magnets, please use magpylib like here. 
 """
