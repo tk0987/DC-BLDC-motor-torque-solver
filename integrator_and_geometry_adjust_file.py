@@ -189,56 +189,56 @@ angle_deg=0.0
 
 radius_mm_1 = 9 # spacing between the center of the magnet and [x,y]=[0,0]
 
-angler=0.0 # this is rotation of rotor - an angle between x or y (doesn't matter) axis and main axis of motor.
-for angler in range(0,10,1):
+angler=0.0 # this is rotation of rotor - an angle between x or y (doesn't matter) axis and main axis of motor. so, we divide pi/2 by 110 steps
+for angler in range(0,110,1):
     angle_deg = 0.0
     z=-9
     # making magnets of a rotor 4x:
     for i in range(0,mag_no_2,1):
-        x_mag = radius_mm_1*np.cos(angle_deg+angler/10.0*np.pi/2.0) # here you have angler variable. it is a quadrupole, so pi/2 is max rotation
-        y_mag = radius_mm_1*np.sin(angle_deg+angler/10.0*np.pi/2.0)
+        x_mag = radius_mm_1*np.cos(angle_deg+angler/110.0*np.pi/2.0) # here you have angler variable. it is a quadrupole, so pi/2 is max rotation
+        y_mag = radius_mm_1*np.sin(angle_deg+angler/110.0*np.pi/2.0)
         mag_pos = (x_mag,y_mag,z)
         magnetization = (1000,0,0)
-        orientation = R.from_rotvec((0,0,5*angle_deg+angler/10.0*np.pi/2.0))
+        orientation = R.from_rotvec((0,0,5*angle_deg+angler/110.0*np.pi/2.0))
         magnet = mg.magnet.Cuboid(magnetization,mag_size_mm,mag_pos,orientation)
         halbach_mag_no_1.append(magnet)
         angle_deg+=2*np.pi/mag_no_2
     angle_deg=0.0
     z=-3
     for j in range(0,mag_no_2,1):
-        x_mag = radius_mm_1*np.cos(angle_deg+angler/10.0*np.pi/2.0)
-        y_mag = radius_mm_1*np.sin(angle_deg+angler/10.0*np.pi/2.0)
+        x_mag = radius_mm_1*np.cos(angle_deg+angler/110.0*np.pi/2.0)
+        y_mag = radius_mm_1*np.sin(angle_deg+angler/110.0*np.pi/2.0)
         mag_pos = (x_mag,y_mag,z)
         magnetization = (1000,0,0)
-        orientation = R.from_rotvec((0,0,5*angle_deg+angler/10.0*np.pi/2.0))
+        orientation = R.from_rotvec((0,0,5*angle_deg+angler/110.0*np.pi/2.0))
         magnet = mg.magnet.Cuboid(magnetization,mag_size_mm,mag_pos,orientation)
         halbach_mag_no_2.append(magnet)
         angle_deg+=2*np.pi/mag_no_2
     angle_deg = 0.0
     z = 3
     for ind in range(0,mag_no_2,1):
-        x_mag = radius_mm_1*np.cos(angle_deg+angler/10.0*np.pi/2.0)
-        y_mag = radius_mm_1*np.sin(angle_deg+angler/10.0*np.pi/2.0)
+        x_mag = radius_mm_1*np.cos(angle_deg+angler/110.0*np.pi/2.0)
+        y_mag = radius_mm_1*np.sin(angle_deg+angler/110.0*np.pi/2.0)
         mag_pos = (x_mag,y_mag,z)
         magnetization = (1000,0,0)
-        orientation = R.from_rotvec((0,0,5*angle_deg+angler/10.0*np.pi/2.0))
+        orientation = R.from_rotvec((0,0,5*angle_deg+angler/110.0*np.pi/2.0))
         magnet = mg.magnet.Cuboid(magnetization,mag_size_mm,mag_pos,orientation)
         halbach_mag_no_3.append(magnet)
         angle_deg+=2*np.pi/mag_no_2
     angle_deg=0.0
     z=9
     for jnd in range(0,mag_no_2,1):
-        x_mag = radius_mm_1*np.cos(angle_deg+angler/10.0*np.pi/2.0)
-        y_mag = radius_mm_1*np.sin(angle_deg+angler/10.0*np.pi/2.0)
+        x_mag = radius_mm_1*np.cos(angle_deg+angler/110.0*np.pi/2.0)
+        y_mag = radius_mm_1*np.sin(angle_deg+angler/110.0*np.pi/2.0)
         mag_pos = (x_mag,y_mag,z)
         magnetization = (1000,0,0)
-        orientation = R.from_rotvec((0,0,5*angle_deg+angler/10.0*np.pi/2.0))
+        orientation = R.from_rotvec((0,0,5*angle_deg+angler/110.0*np.pi/2.0))
         magnet = mg.magnet.Cuboid(magnetization,mag_size_mm,mag_pos,orientation)
         halbach_mag_no_4.append(magnet)
         angle_deg+=2*np.pi/mag_no_2
     angle_deg = 0.0
 
-
+    # mg.show(halbach_mag_no_1[:]+halbach_mag_no_1[:]+halbach_mag_no_3[:]+halbach_mag_no_4[:])
 # here are the lists for acquiring 'dl' - as a np.ndarray for simplicity, and maybe speed?
     dl1=np.ndarray(shape=np.shape(temp))
     dl2=np.ndarray(shape=np.shape(temp2))
@@ -262,11 +262,11 @@ for angler in range(0,10,1):
     dl4=np.asanyarray(dl4)
 
     """
-    dTorque = current * SUM[(dl) *(dl x B)] +++++++++++++++ CRUCIAL LIKE THE GUNS AND SWORDS ++++++++++++++++++++++++++++++++
+    sum[dTorque] = current * SUM[(dl) *(dl x B)] 
     
     where dl =[dx,dy,dz], and B=[Bx,By,Bz] 
     
-    yeah - everywhere may be error. but: (dl x B) is just force, and when multiplied by dl - torque (it is summed still). at least - by dimension
+    yeah - everywhere may be error. but: (dl x B) is just force, and when multiplied by dl - torque (it is summed still).
     this is the simplest method of rectangles, and i believe there is no possibility to acquire better accuracy (if there are no errors) - when it comes to magnetic fields produced by magnets and coils
 
     there is all about lorentz force acting on wires of the coils. I've tried integrating forces 'between sources of magnetic field' - physically bullshit, numerically... bullshit too. But... i've tried.
@@ -274,7 +274,7 @@ for angler in range(0,10,1):
     if there are wires only, with 1 A only, then it is just great motor... 
     i don't mind if i'm wrong or right, but i couldn't find better free solution for this problem.
 
-    so: i'll make my brushless cnc spindle this way. should work. and bldc controller shouldn't be very complicated.
+    so: i'll make my brushless cnc spindle this way. should work. and bldc controller shouldn't be very complicated. just like stepper controller with microstepping, or simple ac with capacitor shifting phase
     """
     print(1) # start integrating torques from the 1st coil
     for j in range(len(dl1)):
@@ -286,7 +286,7 @@ for angler in range(0,10,1):
         x,y,z=temp[j,0],temp[j,1],temp[j,2]
         sensor = mg.Sensor((x,y,z))
         B=sensor.getB(halbach_mag_no_1[:]+halbach_mag_no_2[:]+halbach_mag_no_3[:]+halbach_mag_no_4[:],sumup=True)
-        force.append([temp[j],integration_step_mm/1000.0*np.cross([dl1[j,0]/1000.0,dl1[j,1]/1000.0,dl1[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),1,angler/10*np.pi/2])# there are [mm] and [mT], remember. it is dumb, but also reasonable. remember, or you will make scum!
+        force.append([temp[j],integration_step_mm/1000.0*np.cross([dl1[j,0]/1000.0,dl1[j,1]/1000.0,dl1[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),1,angler/110*np.pi/2])# there are [mm] and [mT], remember. it is dumb, but also reasonable. remember, or you will make scum!
     print(2)# start integrating torques from the 2nd coil
     for j in range(len(dl2)):
         if dl2[j,0]>=0 and dl2[j,1]>=0 and dl2[j,2]>=0 and current<0:
@@ -297,7 +297,7 @@ for angler in range(0,10,1):
         x,y,z=temp2[j,0],temp2[j,1],temp2[j,2]
         sensor = mg.Sensor((x,y,z))
         B=sensor.getB(halbach_mag_no_1[:]+halbach_mag_no_2[:]+halbach_mag_no_3[:]+halbach_mag_no_4[:],sumup=True)
-        force.append([temp2[j],integration_step_mm/1000.0*np.cross([dl2[j,0]/1000.0,dl2[j,1]/1000.0,dl2[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),2,angler/10*np.pi/2])
+        force.append([temp2[j],integration_step_mm/1000.0*np.cross([dl2[j,0]/1000.0,dl2[j,1]/1000.0,dl2[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),2,angler/110*np.pi/2])
     print(3)# start integrating torques from the 3rd coil
     for j in range(len(dl3)):
         if dl3[j,0]>=0 and dl3[j,1]>=0 and dl3[j,2]>=0 and current>0:
@@ -308,7 +308,7 @@ for angler in range(0,10,1):
         x,y,z=temp3[j,0],temp3[j,1],temp3[j,2]
         sensor = mg.Sensor((x,y,z))
         B=sensor.getB(halbach_mag_no_1[:]+halbach_mag_no_2[:]+halbach_mag_no_3[:]+halbach_mag_no_4[:],sumup=True)
-        force.append([temp3[j],integration_step_mm/1000.0*np.cross([dl3[j,0]/1000.0,dl3[j,1]/1000.0,dl3[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),3,angler/10*np.pi/2])
+        force.append([temp3[j],integration_step_mm/1000.0*np.cross([dl3[j,0]/1000.0,dl3[j,1]/1000.0,dl3[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),3,angler/110*np.pi/2])
     print(4)# start integrating torques from the 4th coil
     for j in range(len(dl4)):
         if dl4[j,0]>=0 and dl4[j,1]>=0 and dl4[j,2]>=0 and current<0:
@@ -319,7 +319,7 @@ for angler in range(0,10,1):
         x,y,z=temp4[j,0],temp4[j,1],temp4[j,2]
         sensor = mg.Sensor((x,y,z))
         B=sensor.getB(halbach_mag_no_1[:]+halbach_mag_no_2[:]+halbach_mag_no_3[:]+halbach_mag_no_4[:],sumup=True)
-        force.append([temp4[j],integration_step_mm/1000.0*np.cross([dl4[j,0]/1000.0,dl4[j,1]/1000.0,dl4[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),4,angler/10*np.pi/2])
+        force.append([temp4[j],integration_step_mm/1000.0*np.cross([dl4[j,0]/1000.0,dl4[j,1]/1000.0,dl4[j,2]/1000.0],[B[0]/1000.0,B[1]/1000.0,B[2]/1000.0]),4,angler/110*np.pi/2])
     print(angler) # know the progress!
 print('saving...') # write to file, as my approach can be wrong now and later. now circa 15 MB, quite low for numerical computing tasks...
 f=open("rotor_negative_current.txt","w")
